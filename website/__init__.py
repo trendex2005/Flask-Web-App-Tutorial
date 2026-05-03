@@ -8,18 +8,19 @@ DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
+    
+    # Use the SECRET_KEY from Heroku Settings, or a default one locally
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-for-local')
     
-    # --- HEROKU DATABASE FIX ---
-    # Heroku provides DATABASE_URL, but we must change 'postgres://' to 'postgresql://'
- # Inside create_app()
-uri = os.getenv("DATABASE_URL")
-if uri and uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)
+    # --- HEROKU DATABASE FIX START ---
+    # We must indent these lines so they are INSIDE the create_app function
+    uri = os.getenv("DATABASE_URL")
+    if uri and uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = uri or f'sqlite:///{DB_NAME}'
-
-    # ---------------------------
+    # Use the Heroku Postgres URI, or fallback to local SQLite
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri or f'sqlite:///{DB_NAME}'
+    # --- HEROKU DATABASE FIX END ---
 
     db.init_app(app)
 
