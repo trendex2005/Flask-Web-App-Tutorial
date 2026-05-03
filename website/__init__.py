@@ -12,11 +12,13 @@ def create_app():
     
     # --- HEROKU DATABASE FIX ---
     # Heroku provides DATABASE_URL, but we must change 'postgres://' to 'postgresql://'
-    uri = os.getenv("DATABASE_URL")
-    if uri and uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://", 1)
-    
-    app.config['SQLALCHEMY_DATABASE_URI'] = uri or f'sqlite:///{DB_NAME}'
+ # Inside create_app()
+uri = os.getenv("DATABASE_URL")
+if uri and uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = uri or f'sqlite:///{DB_NAME}'
+
     # ---------------------------
 
     db.init_app(app)
